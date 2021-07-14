@@ -1,0 +1,38 @@
+.DS_Store
+Thumbs.db
+# Node modules and package locks (if using node tooling)
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json
+yarn.lock
+
+# Build / output folders
+dist/
+build/
+
+# Environment files
+.env
+.env.*
+
+# IDE/editor folders
+.vscode/
+.idea/
+
+# Logs
+*.log
+
+# Coverage / test caches
+coverage/
+.nyc_output/
+
+# Misc
+*.tmp
+*.temp
+*.swp
+*.swo
+
+# Python caches (if someone runs Python tooling locally)
+__pycache__/
+*.py[cod]
