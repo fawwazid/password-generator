@@ -1,128 +1,208 @@
 <!DOCTYPE html>
 <html lang="en">
+    <head>
+        <meta charset="UTF-8" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+        <meta
+            name="description"
+            content="Password generator to create strong passwords. Help you prevent security threats by getting strong passwords."
+        />
+        <meta name="keywords" content="Password, Generator" />
+        <meta name="theme-color" content="#36C4E0" />
+        <meta name="copyright" content="Ninfli" />
+        <meta name="author" content="Abdullah Fawwaz Qudamah, mail@fawwaz.id" />
+        <meta name="url" content="https://ninfli.com" />
+        <link
+            rel="shortcut icon"
+            href="images/favicon.ico"
+            type="image/x-icon"
+        />
+        <!-- CSS -->
+        <link rel="stylesheet" href="css/bootstrap.min.css" />
+        <link rel="stylesheet" href="css/all.min.css" />
+        <link rel="stylesheet" href="css/style.css" />
+        <title>Password Generator</title>
+    </head>
 
-<head>
-    <meta charset="UTF-8" />
-    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description"
-        content="Password generator to create strong passwords. Help you prevent security threats by getting strong passwords.">
-    <meta name="keywords" content="Password, Generator">
-    <meta name="theme-color" content="#36C4E0">
-    <meta name='copyright' content='Ninfli'>
-    <meta name='author' content='Abdullah Fawwaz Qudamah, mail@fawwaz.id'>
-    <meta name='url' content='https://ninfli.com'>
-    <link rel="shortcut icon" href="images/favicon.ico" type="image/x-icon" />
-    <!-- CSS -->
-    <link rel="stylesheet" href="css/bootstrap.min.css" />
-    <link rel="stylesheet" href="css/all.min.css" />
-    <link rel="stylesheet" href="css/style.css" />
-    <title>Password Generator</title>
-</head>
-
-<body>
-    <div class="container d-flex justify-content-center my-5">
-        <div class="row">
-            <!-- TITTLE -->
-            <div class="col-12">
-                <h1 class="card-title text-center fw-bold">
-                    Password Generator
-                </h1>
-                <h6 class="mb-2 text-muted text-center">
-                    Password generator to create strong passwords. Help you
-                    prevent security threats by getting strong passwords.
-                </h6>
-            </div>
-            <!-- PASSWORD RESULT -->
-            <div class="col-12 mt-5">
-                <div class="card border-0" id="random_password">
-                    <div class="card-body">
-                        <!-- PASSWORD -->
-                        <input type="text" class="
+    <body>
+        <div class="container d-flex justify-content-center my-5">
+            <div class="row">
+                <!-- TITTLE -->
+                <div class="col-12">
+                    <h1 class="card-title text-center fw-bold">
+                        Password Generator
+                    </h1>
+                    <h6 class="mb-2 text-muted text-center">
+                        Password generator to create strong passwords. Help you
+                        prevent security threats by getting strong passwords.
+                    </h6>
+                </div>
+                <!-- PASSWORD RESULT -->
+                <div class="col-12 mt-5">
+                    <div class="card border-0" id="random_password">
+                        <div class="card-body">
+                            <!-- PASSWORD -->
+                            <input
+                                type="text"
+                                class="
                                     form-control
                                     border-0
                                     bg-transparent
                                     shadow-none
-                                " placeholder="Your Password" id="password_text" name="password_text" readonly />
-                    </div>
-                    <div class="card-footer p-0 border-0">
-                        <!-- PASSWORD STRENGTH CHECKER -->
-                        <div class="progress rounded-0 bg-transparent">
-                            <div class="progress-bar" role="progressbar" aria-valuemin="0" aria-valuemax="100"
-                                id="password_checker"></div>
+                                "
+                                placeholder="Your Password"
+                                id="password_text"
+                                name="password_text"
+                                readonly
+                            />
+                        </div>
+                        <div class="card-footer p-0 border-0">
+                            <!-- CHECK PASSWORD STRENGTH -->
+                            <div class="progress rounded-0 bg-transparent">
+                                <div
+                                    class="progress-bar"
+                                    role="progressbar"
+                                    aria-valuemin="0"
+                                    aria-valuemax="100"
+                                    id="password_checker"
+                                ></div>
+                            </div>
                         </div>
                     </div>
                 </div>
-            </div>
-            <!-- PASSWORD CONFIGURATION -->
-            <div class="col-12 mt-5">
-                <div class="card" id="password_configuration">
-                    <div class="card-body">
-                        <div class="row">
-                            <div class="col-12">
-                                <h4 fw-bold>Password Configuration</h4>
-                                <hr />
-                            </div>
-                            <div class="col-12">
-                                <div class="row">
-                                    <div class="col-lg-6">
-                                        <!-- PASSWORD LENGTH -->
-                                        <label for="password-length" class="form-label">Password Length:
-                                            <span id="password_length_text"></span></label>
-                                        <input type="range" class="form-range" id="password_length"
-                                            name="password_length" min="4" max="64" value="4" />
-                                    </div>
-                                    <div class="col-lg-3 mt-3 mt-lg-0">
-                                        <!-- LOWERCASE -->
-                                        <div class="form-check">
-                                            <input class="form-check-input" type="checkbox"
-                                                value="abcdefghijklmnopqrstuvwxyz" id="lowercase_check"
-                                                name="lowercase_check" checked />
-                                            <label class="form-check-label" for="lowercase_check">
-                                                Lowercase (eg: a-z)
-                                            </label>
+                <!-- PASSWORD CONFIGURATION -->
+                <div class="col-12 mt-5">
+                    <div class="card" id="password_configuration">
+                        <div class="card-body">
+                            <div class="row">
+                                <div class="col-12">
+                                    <h4 fw-bold>Password Configuration</h4>
+                                    <hr />
+                                </div>
+                                <div class="col-12">
+                                    <div class="row">
+                                        <div class="col-lg-6">
+                                            <!-- PASSWORD LENGTH -->
+                                            <label
+                                                for="password-length"
+                                                class="form-label"
+                                                >Password Length:
+                                                <span
+                                                    id="password_length_text"
+                                                ></span
+                                            ></label>
+                                            <input
+                                                type="range"
+                                                class="form-range"
+                                                id="password_length"
+                                                name="password_length"
+                                                min="4"
+                                                max="64"
+                                                value="4"
+                                            />
                                         </div>
-                                        <!-- UPPERCASE -->
-                                        <div class="form-check mt-3">
-                                            <input class="form-check-input" type="checkbox"
-                                                value="ABCDEFGHIJKLMNOPQRSTUVWXYZ" id="uppercase_check"
-                                                name="uppercase_check" />
-                                            <label class="form-check-label" for="uppercase_check">
-                                                Uppercase (eg: A-Z)
-                                            </label>
+                                        <div class="col-lg-3 mt-3 mt-lg-0">
+                                            <!-- LOWERCASE -->
+                                            <div class="form-check">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    value="abcdefghijklmnopqrstuvwxyz"
+                                                    id="lowercase_check"
+                                                    name="lowercase_check"
+                                                    checked
+                                                />
+                                                <label
+                                                    class="form-check-label"
+                                                    for="lowercase_check"
+                                                >
+                                                    Lowercase (eg: a-z)
+                                                </label>
+                                            </div>
+                                            <!-- UPPERCASE -->
+                                            <div class="form-check mt-3">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    value="ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+                                                    id="uppercase_check"
+                                                    name="uppercase_check"
+                                                />
+                                                <label
+                                                    class="form-check-label"
+                                                    for="uppercase_check"
+                                                >
+                                                    Uppercase (eg: A-Z)
+                                                </label>
+                                            </div>
+                                            <!-- NUMBERS -->
+                                            <div class="form-check mt-3">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    value="0123456789"
+                                                    id="numbers_check"
+                                                    name="numbers_check"
+                                                />
+                                                <label
+                                                    class="form-check-label"
+                                                    for="numbers_check"
+                                                >
+                                                    Numbers (eg: 0-9)
+                                                </label>
+                                            </div>
+                                            <!-- SYMBOLS -->
+                                            <div class="form-check mt-3">
+                                                <input
+                                                    class="form-check-input"
+                                                    type="checkbox"
+                                                    value="!@#$%^&*"
+                                                    id="symbols_check"
+                                                    name="symbols_check"
+                                                />
+                                                <label
+                                                    class="form-check-label"
+                                                    for="symbols_check"
+                                                >
+                                                    Symbols (eg: !@#$%^&*)
+                                                </label>
+                                            </div>
                                         </div>
-                                        <!-- NUMBERS -->
-                                        <div class="form-check mt-3">
-                                            <input class="form-check-input" type="checkbox" value="0123456789"
-                                                id="numbers_check" name="numbers_check" />
-                                            <label class="form-check-label" for="numbers_check">
-                                                Numbers (eg: 0-9)
-                                            </label>
-                                        </div>
-                                        <!-- SYMBOLS -->
-                                        <div class="form-check mt-3">
-                                            <input class="form-check-input" type="checkbox" value="!@#$%^&*"
-                                                id="symbols_check" name="symbols_check" />
-                                            <label class="form-check-label" for="symbols_check">
-                                                Symbols (eg: !@#$%^&*)
-                                            </label>
-                                        </div>
-                                    </div>
-                                    <div class="col-lg-3 mt-3 mt-lg-0">
-                                        <div class="d-grid gap-2">
-                                            <!-- COPY PASSWORD -->
-                                            <button class="btn btn-primary" type="button" id="button_copy">
-                                                <i class="far fa-copy me-2"></i><span id="copy_text">Copy
-                                                    Password</span>
-                                            </button>
-                                            <!-- GENERATE PASSWORD -->
-                                            <button class="btn btn-primary" type="button" id="button_generate">
-                                                <i class="
+                                        <div class="col-lg-3 mt-3 mt-lg-0">
+                                            <div class="d-grid gap-2">
+                                                <!-- COPY PASSWORD -->
+                                                <button
+                                                    class="btn btn-primary"
+                                                    type="button"
+                                                    id="button_copy"
+                                                >
+                                                    <i
+                                                        class="far fa-copy me-2"
+                                                    ></i
+                                                    ><span id="copy_text"
+                                                        >Copy Password</span
+                                                    >
+                                                </button>
+                                                <!-- GENERATE PASSWORD -->
+                                                <button
+                                                    class="btn btn-primary"
+                                                    type="button"
+                                                    id="button_generate"
+                                                >
+                                                    <i
+                                                        class="
                                                             fas
                                                             fa-sync-alt
                                                             me-2
-                                                        " id="icon_generate"></i><span>Generate Password</span>
-                                            </button>
+                                                        "
+                                                        id="icon_generate"
+                                                    ></i
+                                                    ><span
+                                                        >Generate Password</span
+                                                    >
+                                                </button>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
@@ -130,18 +210,27 @@
                         </div>
                     </div>
                 </div>
-            </div>
-            <div class="col-12 text-center mt-3">
-                <p class="fw-light">
-                    Powered by
-                    <a href="https://ninfli.com" target="_blank" class="text-decoration-none">Ninfli</a>.
-                </p>
+                <div class="col-12 text-center mt-3">
+                    <p class="fw-light">
+                        Created by
+                        <a
+                            href="https://fawwaz.id"
+                            target="_blank"
+                            class="text-decoration-none"
+                            >Abdullah Fawwaz Qudamah</a
+                        >. Powered by
+                        <a
+                            href="https://ninfli.com"
+                            target="_blank"
+                            class="text-decoration-none"
+                            >Ninfli</a
+                        >.
+                    </p>
+                </div>
             </div>
         </div>
-    </div>
-    <!-- JS -->
-    <script src="js/bootstrap.min.js"></script>
-    <script src="js/script.js"></script>
-</body>
-
+        <!-- JS -->
+        <script src="js/bootstrap.min.js"></script>
+        <script src="js/script.js"></script>
+    </body>
 </html>
