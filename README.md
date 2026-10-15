@@ -25,3 +25,10 @@ Found a bug or want a new feature? Please open an issue or submit a pull request
 
 ## License
 This project is licensed under the terms in the `LICENSE` file.
+## Security
+- Passwords are generated locally with the browser Web Crypto API (`crypto.getRandomValues`), using rejection sampling to avoid modulo bias.
+- Password length is 12–128 characters (default: 20). Every selected character class is represented, followed by a cryptographically secure shuffle.
+- No password is sent to a server or stored by the application. Treat copied passwords as sensitive clipboard data.
+- Clipboard copying requires a secure context (HTTPS or localhost in modern browsers); when unavailable, select and copy the displayed password manually.
+- The strength indicator is an approximation, not a password security audit. Use unique passwords and a trusted password manager.
+- If secure randomness is unavailable, generation fails closed rather than falling back to `Math.random()`.
