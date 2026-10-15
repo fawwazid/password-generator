@@ -1,140 +1,124 @@
-// DECLARE
-const password_text = document.getElementById("password_text"),
-    password_checker = document.getElementById("password_checker"),
-    password_length_text = document.getElementById("password_length_text"),
-    password_length = document.getElementById("password_length"),
-    lowercase_check = document.getElementById("lowercase_check"),
-    uppercase_check = document.getElementById("uppercase_check"),
-    numbers_check = document.getElementById("numbers_check"),
-    symbols_check = document.getElementById("symbols_check"),
-    button_copy = document.getElementById("button_copy"),
-    copy_text = document.getElementById("copy_text"),
-    button_generate = document.getElementById("button_generate"),
-    icon_generate = document.getElementById("icon_generate"),
-    password_lowercase = "abcdefghijklmnopqrstuvwxyz",
-    password_uppercase = "ABCDEFGHIJKLMNOPQRSTUVWXYZ",
-    password_numbers = "0123456789",
-    password_symbols = "!@#$%^&*";
-// PASSWORD GENERATOR
-function PasswordGenerator() {
-    let e = "",
-        s = "";
-    lowercase_check.checked && (e += "1"),
-        uppercase_check.checked && (e += "2"),
-        numbers_check.checked && (e += "3"),
-        symbols_check.checked && (e += "4");
-    for (let t = 0; t < password_length.value; t++) {
-        let t = e.charAt(Math.floor(Math.random() * e.length));
-        "1" === t &&
-            (s += password_lowercase.charAt(
-                Math.floor(Math.random() * password_lowercase.length)
-            )),
-            "2" === t &&
-                (s += password_uppercase.charAt(
-                    Math.floor(Math.random() * password_uppercase.length)
-                )),
-            "3" === t &&
-                (s += "0123456789".charAt(
-                    Math.floor(Math.random() * "0123456789".length)
-                )),
-            "4" === t &&
-                (s += "!@#$%^&*".charAt(
-                    Math.floor(Math.random() * "!@#$%^&*".length)
-                ));
+"use strict";
+
+const passwordText = document.getElementById("password_text");
+const strengthBar = document.getElementById("password_checker");
+const lengthText = document.getElementById("password_length_text");
+const lengthSlider = document.getElementById("password_length");
+const copyButton = document.getElementById("button_copy");
+const copyText = document.getElementById("copy_text");
+const generateButton = document.getElementById("button_generate");
+const generateIcon = document.getElementById("icon_generate");
+const options = [
+    { element: document.getElementById("lowercase_check"), chars: "abcdefghijklmnopqrstuvwxyz" },
+    { element: document.getElementById("uppercase_check"), chars: "ABCDEFGHIJKLMNOPQRSTUVWXYZ" },
+    { element: document.getElementById("numbers_check"), chars: "0123456789" },
+    { element: document.getElementById("symbols_check"), chars: "!@#$%^&*" },
+];
+
+// Rejection sampling avoids modulo bias. Never use Math.random() for secrets.
+function secureIndex(max) {
+    if (!Number.isSafeInteger(max) || max < 1 || max > 0x100000000) {
+        throw new RangeError("Invalid random range");
     }
-    (password_text.value = s), PasswordChecker();
+    const range = 0x100000000;
+    const limit = range - (range % max);
+    const buffer = new Uint32Array(1);
+    let value;
+    do {
+        crypto.getRandomValues(buffer);
+        value = buffer[0];
+    } while (value >= limit);
+    return value % max;
 }
-// CHECK PASSWORD STRENGTH
-function PasswordChecker() {
-    let e = password_text.value;
-    e.length <= 4
-        ? (password_checker.classList.remove("bg-warning", "bg-success"),
-          password_checker.classList.add("bg-danger"),
-          (password_checker.style.width = "10%"),
-          password_checker.setAttribute("aria-valuenow", "10%"))
-        : e.length <= 6
-        ? (password_checker.classList.remove("bg-warning", "bg-success"),
-          password_checker.classList.add("bg-danger"),
-          (password_checker.style.width = "25%"),
-          password_checker.setAttribute("aria-valuenow", "25%"))
-        : e.length <= 8
-        ? (password_checker.classList.remove("bg-danger", "bg-success"),
-          password_checker.classList.add("bg-warning"),
-          (password_checker.style.width = "40%"),
-          password_checker.setAttribute("aria-valuenow", "40%"))
-        : e.length <= 10
-        ? (password_checker.classList.remove("bg-danger", "bg-success"),
-          password_checker.classList.add("bg-warning"),
-          (password_checker.style.width = "55%"),
-          password_checker.setAttribute("aria-valuenow", "55%"))
-        : e.length <= 12
-        ? (password_checker.classList.remove("bg-danger", "bg-success"),
-          password_checker.classList.add("bg-warning"),
-          (password_checker.style.width = "70%"),
-          password_checker.setAttribute("aria-valuenow", "70%"))
-        : e.length <= 14
-        ? (password_checker.classList.remove("bg-danger", "bg-warning"),
-          password_checker.classList.add("bg-success"),
-          (password_checker.style.width = "85%"),
-          password_checker.setAttribute("aria-valuenow", "85%"))
-        : (password_checker.classList.remove("bg-danger", "bg-warning"),
-          password_checker.classList.add("bg-success"),
-          (password_checker.style.width = "100%"),
-          password_checker.setAttribute("aria-valuenow", "100%"));
+
+function securePassword(length, groups) {
+    if (!Number.isSafeInteger(length) || length < 12 || length > 128 ||
+        !Array.isArray(groups) || groups.length === 0 ||
+        groups.some(group => typeof group !== "string" || group.length === 0) ||
+        length < groups.length) {
+        throw new RangeError("Invalid password configuration");
+    }
+
+    const pool = groups.join("");
+    const chars = groups.map(group => group[secureIndex(group.length)]);
+    while (chars.length < length) {
+        chars.push(pool[secureIndex(pool.length)]);
+    }
+    // Fisher-Yates shuffle removes predictable placement of required groups.
+    for (let i = chars.length - 1; i > 0; i--) {
+        const j = secureIndex(i + 1);
+        [chars[i], chars[j]] = [chars[j], chars[i]];
+    }
+    return chars.join("");
 }
-// CHECKBOX VALIDATION = "at least one checkbox selected"
-function CheckboxValidation() {
-    let e = [
-        lowercase_check,
-        uppercase_check,
-        numbers_check,
-        symbols_check,
-    ].filter((e) => e.checked);
-    e.forEach((s) => {
-        1 == e.length ? (s.disabled = !0) : (s.disabled = !1);
+
+function updateStrength(groups, length) {
+    // Lower-bound estimate: mandatory characters are constrained by group selection.
+    // This is guidance, not a guarantee against password cracking.
+    const poolSize = groups.join("").length;
+    const estimatedBits = length * Math.log2(poolSize);
+    const percent = estimatedBits < 60 ? 25 : estimatedBits < 80 ? 55 : estimatedBits < 100 ? 80 : 100;
+    strengthBar.classList.remove("bg-danger", "bg-warning", "bg-success");
+    strengthBar.classList.add(percent < 50 ? "bg-danger" : percent < 80 ? "bg-warning" : "bg-success");
+    strengthBar.style.width = percent + "%";
+    strengthBar.setAttribute("aria-valuenow", String(percent));
+    strengthBar.setAttribute("aria-label", "Estimated password strength");
+}
+
+function generatePassword() {
+    const length = Number(lengthSlider.value);
+    const groups = options.filter(option => option.element.checked).map(option => option.chars);
+    lengthText.textContent = String(length);
+    try {
+        if (!globalThis.crypto || typeof crypto.getRandomValues !== "function") {
+            throw new Error("Secure randomness is unavailable in this browser");
+        }
+        passwordText.value = securePassword(length, groups);
+        updateStrength(groups, length);
+        copyButton.disabled = false;
+        copyText.textContent = "Copy Password";
+    } catch (error) {
+        passwordText.value = "";
+        copyButton.disabled = true;
+        strengthBar.style.width = "0%";
+        strengthBar.setAttribute("aria-valuenow", "0");
+        copyText.textContent = "Unavailable";
+        console.error("Password generation failed:", error.message);
+    }
+}
+
+function updateCheckboxes() {
+    const checked = options.filter(option => option.element.checked);
+    options.forEach(option => {
+        option.element.disabled = checked.length === 1 && option.element.checked;
     });
 }
-// call the function while the document is loading
-document.addEventListener("DOMContentLoaded", () => {
-    (password_length_text.innerHTML = password_length.value),
-        CheckboxValidation(),
-        PasswordGenerator();
-}),
-    // call function when password length is changed
-    password_length.addEventListener("change", () => {
-        (password_length_text.innerHTML = password_length.value),
-            PasswordGenerator();
-    }),
-    // call function when checkbox is checked
-    [lowercase_check, uppercase_check, numbers_check, symbols_check].forEach(
-        (e) => {
-            e.addEventListener("click", () => {
-                CheckboxValidation(), PasswordGenerator();
-            });
+
+async function copyPassword() {
+    if (!passwordText.value) return;
+    try {
+        if (!navigator.clipboard || !navigator.clipboard.writeText) {
+            throw new Error("Clipboard API unavailable");
         }
-    ),
-    // call function when button copy on click
-    button_copy.addEventListener("click", () => {
-        var e = document.createElement("textarea");
-        document.body.appendChild(e),
-            (e.value = password_text.value),
-            e.select();
-        try {
-            document.execCommand("copy") && (copy_text.innerHTML = "Copied!");
-        } catch (e) {
-            console.log(e);
-        }
-        document.execCommand("copy"),
-            document.body.removeChild(e),
-            setTimeout(() => {
-                copy_text.innerHTML = "Copy Password";
-            }, 1500);
-    }),
-    // call function when generate password on click
-    button_generate.addEventListener("click", () => {
-        icon_generate.classList.add("fa-spin"),
-            PasswordGenerator(),
-            setTimeout(() => {
-                icon_generate.classList.remove("fa-spin");
-            }, 500);
-    });
+        await navigator.clipboard.writeText(passwordText.value);
+        copyText.textContent = "Copied!";
+    } catch (_) {
+        // Never log or transmit generated passwords.
+        copyText.textContent = "Copy failed (use HTTPS or localhost)";
+    }
+    setTimeout(() => { copyText.textContent = "Copy Password"; }, 2000);
+}
+
+lengthSlider.addEventListener("input", generatePassword);
+options.forEach(option => option.element.addEventListener("change", () => {
+    updateCheckboxes();
+    generatePassword();
+}));
+copyButton.addEventListener("click", copyPassword);
+generateButton.addEventListener("click", () => {
+    generateIcon.classList.add("fa-spin");
+    generatePassword();
+    setTimeout(() => generateIcon.classList.remove("fa-spin"), 500);
+});
+updateCheckboxes();
+generatePassword();
